@@ -3,6 +3,8 @@
         "slim/slim": "^4.3",
         "slim/psr7": "^0.6.0",
         "slim/http": "^0.8.0",
-        "tightenco/collect": "^6.7"
+        "tightenco/collect": "^6.7",
+        "slim/php-view": "^2.2",
+        "php-di/php-di": "^6.0"
     }
 }
