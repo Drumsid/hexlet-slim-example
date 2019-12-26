@@ -1,0 +1,9 @@
+<?php
+// echo "<pre>";
+// print_r($users);
+// echo "</pre>";
+?>
+
+<?php foreach ($users as ['id' => $id, 'firstName' => $firstName]) : ?>
+    <p>id: <?= $id ?> firstName: <a href="/users/<?= $id ?>"><?= $firstName ?></a></p>
+<?php endforeach; ?>

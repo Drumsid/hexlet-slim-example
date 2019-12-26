@@ -1,2 +1,15 @@
-<h1>Hello, <?= $id ?></h1>
-<h1>Hello, <?= $nickname ?></h1>
+<h1>Hello, <?= htmlspecialchars($id) ?></h1>
+<h1>Hello, <?= htmlspecialchars($nickname) ?></h1>
+
+<a href="/users">Пользователи</a>
+
+
+<?php foreach ($users as $user) :
+
+    if ($user['id'] == $userId) : ?>
+
+        <p>id: <?= $user['id'] ?>; firstName: <?= $user['firstName'] ?>; lastName: <?= $user['lastName'] ?>; email: <?= $user['email'] ?>;</p>
+
+    <?php endif; ?>
+
+<?php endforeach; ?>
