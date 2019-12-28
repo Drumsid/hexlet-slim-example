@@ -3,6 +3,10 @@
 // print_r($users);
 // echo "</pre>";
 ?>
+<a href="/">Главная</a>
+<a href="/users">Пользователи</a>
+<a href="/search">Поиск</a>
+
 
 <?php foreach ($users as ['id' => $id, 'firstName' => $firstName]) : ?>
     <p>id: <?= $id ?> firstName: <a href="/users/<?= $id ?>"><?= $firstName ?></a></p>

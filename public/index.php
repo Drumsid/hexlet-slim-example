@@ -27,6 +27,8 @@ $users = [
     ['id' => 2, 'firstName' => 'Norval', 'lastName' => 'Nitzsche', 'email' => 'Nitzsche@satterfield.com'],
 ];
 
+$searchUsers = ['mike', 'mishel', 'adel', 'keks', 'kamila', 'satras', 'asdasdtrasd', 'asdtrmifs'];
+
 // тестовый вывод slim при установке
 // $app->get('/', function ($request, $response) {
 //     return $response->write('Welcome to Slim!');
@@ -59,13 +61,13 @@ $app->get('/courses/{id}', function ($request, $response, array $args) {
     return $response->write("Course id: {$id}");
 });
 
-// запрос на /users и подключение шаблона users/index в папке template
+// запрос на /users и подключение шаблона users/index из папки template
 $app->get('/users', function ($request, $response, $args) use ($users) {
     $params = ['users' => $users];
     return $this->get('renderer')->render($response, 'users/index.phtml', $params);
 });
 
-// запрос на /users/{id} и подключение шаблона users/show в папке template
+// запрос на /users/{id} и подключение шаблона users/show из папки template
 $app->get('/users/{id}', function ($request, $response, $args) use ($users) {
     $params = ['users' => $users, 'userId' => $args['id'], 'id' => $args['id'], 'nickname' => 'user-' . $args['id']];
     return $this->get('renderer')->render($response, 'users/show.phtml', $params);
@@ -87,6 +89,11 @@ $app->get('/users/{id}', function ($request, $response, $args) use ($users) {
 //
 //
 
-//
+// запрос на /search и подключение шаблона search/index из папки template и реализация поиска в массиве $searchUsers
+$app->get('/search', function ($request, $response) use ($searchUsers) {
+    $term = $request->getQueryParam('term');
+    $params = ['searchUsers' => $searchUsers, 'term' => $term];
+    return $this->get('renderer')->render($response, 'search/index.phtml', $params);
+});
 
 $app->run();
