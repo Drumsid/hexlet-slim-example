@@ -2,14 +2,23 @@
 <a href="/">Главная</a>
 <a href="/users">Пользователи</a>
 <a href="/search">Поиск</a>
+<a href="/addusers/new">Регистрация</a>
 <br>
 <br>
 <br>
+<?php
+echo "На странице можно попробовать поиск среди пользователей, которые написаны ниже" . "<br><br>";
+echo "'mike', 'mishel', 'adel', 'keks', 'kamila', 'satras', 'asdasdtrasd', 'asdtrmifs'" . "<br><br>";
+?>
+<?php
+echo "по вашему запросу найдено следующее:" . "<br><br>";
+?>
 <?php foreach ($searchUsers as $name) : ?>
     <?php if (strpos($name, $term) !== false) : ?>
         <p> <?= $name ?></p>
     <?php endif; ?>
 <?php endforeach; ?>
+
 
 <br>
 <br>

@@ -1,0 +1,62 @@
+<style>
+    .wrap-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+    }
+
+    .user-form {
+        width: 300px;
+        margin: 100px 0 0 0;
+        border: 1px solid red;
+        border-radius: 25px;
+        padding: 50px 25px;
+    }
+
+    label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 0 20px;
+    }
+
+    .errors {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+<?= $dir;?>
+<a href="/">Главная</a>
+<a href="/users">Пользователи</a>
+<a href="/search">Поиск</a>
+<a href="/addusers/new">Регистрация</a>
+<div class="wrap-form">
+    <div class="user-form">
+        <h3>Регистрация</h3>
+        <form action="/addusers" method="post">
+            <div>
+                <?php if (isset($errors['nickname'])) : ?>
+                <div class="errors">Имя: <?= $errors['nickname'] ?></div>
+                <?php endif ?>
+                <label>
+                    <span>Имя</span>
+
+                    <input type="text" name="user[nickname]" value="<?= htmlspecialchars($user['nickname']) ?>">
+                </label>
+
+            </div>
+            <div>
+                <?php if (isset($errors['email'])) : ?>
+                <div class="errors"><?= $errors['email'] ?></div class="errors">
+                <?php endif ?>
+                <label>
+                    Email
+                    <input type="email" required name="user[email]" value="<?= htmlspecialchars($user['email']) ?>">
+                </label>
+
+            </div>
+            <input type="submit" value="Sign Up">
+        </form>
+    </div>
+</div>

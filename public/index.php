@@ -96,4 +96,40 @@ $app->get('/search', function ($request, $response) use ($searchUsers) {
     return $this->get('renderer')->render($response, 'search/index.phtml', $params);
 });
 
+// запрос на /addusers/new и подключение шаблона users/new из папки template и реализация регистрации нового пользователя
+$app->get('/addusers/new', function ($request, $response) {
+    $params = [
+        'user' => ['nickname' => '', 'email' => ''],
+        'errors' => [],
+        'dir' => __DIR__,
+    ];
+    return $this->get('renderer')->render($response, "users/new.phtml", $params);
+});
+
+//
+function validate($user)
+{
+    $errors = [];
+    if (empty($user['nickname'])) {
+        $errors['nickname'] = "Can't be blank";
+    }
+    return $errors;
+}
+//
+$app->post('/addusers', function ($request, $response) {
+    $user = $request->getParsedBodyParam('user');
+    $errors = validate($user);
+    if (count($errors) === 0) {
+        $pathToFile = __DIR__ . "../users/";
+        fopen($pathToFile, 'w+');
+        return $response->withHeader('Location', '/')
+            ->withStatus(302);
+    }
+    $params = [
+        'user' => $user,
+        'errors' => $errors
+    ];
+    return $this->get('renderer')->render($response, "users/new.phtml", $params);
+});
+
 $app->run();
