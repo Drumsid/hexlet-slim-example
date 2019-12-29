@@ -120,7 +120,7 @@ $app->post('/addusers', function ($request, $response) {
     $user = $request->getParsedBodyParam('user');
     $errors = validate($user);
     if (count($errors) === 0) {
-        $pathToFile = __DIR__ . "../users/";
+        $pathToFile = __DIR__ . "/../users/test.txt";
         fopen($pathToFile, 'w+');
         return $response->withHeader('Location', '/')
             ->withStatus(302);
