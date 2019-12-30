@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../lib/function.php';
+
 // Подключение автозагрузки через composer
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -107,21 +109,15 @@ $app->get('/addusers/new', function ($request, $response) {
 });
 
 //
-function validate($user)
-{
-    $errors = [];
-    if (empty($user['nickname'])) {
-        $errors['nickname'] = "Can't be blank";
-    }
-    return $errors;
-}
-//
 $app->post('/addusers', function ($request, $response) {
     $user = $request->getParsedBodyParam('user');
     $errors = validate($user);
-    if (count($errors) === 0) {
-        $pathToFile = __DIR__ . "/../users/test.txt";
-        fopen($pathToFile, 'w+');
+    $pathToFile = __DIR__ . "/../users/users.txt";
+    $strFromFileUser = file_get_contents($pathToFile);
+    $user['id'] = setUserId($strFromFileUser);
+    $jsonUser = json_encode($user);
+    if (count($errors) === 0) {    
+        file_put_contents($pathToFile, $jsonUser . "|", FILE_APPEND);
         return $response->withHeader('Location', '/')
             ->withStatus(302);
     }
