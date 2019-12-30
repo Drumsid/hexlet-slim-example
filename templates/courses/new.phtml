@@ -1,0 +1,71 @@
+<a href="/">Главная</a>
+<a href="/users">Пользователи</a>
+<a href="/search">Поиск</a>
+<a href="/addusers/new">Регистрация</a>
+<a href="/phpcourses/new">Добавить курс</a>
+<!-- <a href="/addusers/new">Курсы</a> -->
+
+<style>
+    .wrap-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+    }
+
+    .course-form {
+        width: 300px;
+        margin: 100px 0 0 0;
+        border: 1px solid red;
+        border-radius: 25px;
+        padding: 50px 25px;
+    }
+
+    label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 0 20px;
+    }
+
+    .errors {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+<?php
+//print_r($post);
+?>
+<div class="wrap-form">
+    <div class="course-form">
+        <h3>Новый курс</h3>
+        <form action="/phpcourses" method="post">
+            <div>
+                <?php if (isset($errors['title'])) : ?>
+                    <div class="errors"><?= $errors['title'] ?></div>
+                <?php endif ?>
+                <label>
+                    Название курса
+                    <input type="text" name="course[title]" value="<?= htmlspecialchars($course['title']) ?>">
+                </label>
+
+            </div>
+            <div>
+                <div>
+                    <?php if (isset($errors['paid'])) : ?>
+                        <div class="errors"><?= $errors['paid'] ?></div>
+                    <?php endif ?>
+                    <label>
+                        Платный
+                        <select name="course[paid]">
+                            <option value="">Select</option>
+                            <option <?= $course['paid'] === '3' ? 'selected' : '' ?> value="pay">Да</option>
+                            <option <?= $course['paid'] === '13' ? 'selected' : '' ?> value="free">Нет</option>
+                        </select>
+                    </label>
+
+                </div>
+                <input type="submit" value="Отправить">
+        </form>
+    </div>
+</div>

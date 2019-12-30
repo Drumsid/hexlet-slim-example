@@ -31,13 +31,16 @@
 <a href="/users">Пользователи</a>
 <a href="/search">Поиск</a>
 <a href="/addusers/new">Регистрация</a>
+<a href="/courses/new">Добавить курс</a>
+<?php //print_r($_POST); 
+?>
 <div class="wrap-form">
     <div class="user-form">
         <h3>Регистрация</h3>
         <form action="/addusers" method="post">
             <div>
                 <?php if (isset($errors['nickname'])) : ?>
-                <div class="errors">Имя: <?= $errors['nickname'] ?></div>
+                    <div class="errors">Имя: <?= $errors['nickname'] ?></div>
                 <?php endif ?>
                 <label>
                     <span>Имя</span>
@@ -48,7 +51,7 @@
             </div>
             <div>
                 <?php if (isset($errors['email'])) : ?>
-                <div class="errors"><?= $errors['email'] ?></div class="errors">
+                    <div class="errors"><?= $errors['email'] ?></div class="errors">
                 <?php endif ?>
                 <label>
                     Email

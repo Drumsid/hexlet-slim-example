@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../lib/function.php';
+require_once __DIR__ . '/../classes/Validator.php';
 
 // Подключение автозагрузки через composer
 require __DIR__ . '/../vendor/autoload.php';
@@ -108,7 +109,7 @@ $app->get('/addusers/new', function ($request, $response) {
     return $this->get('renderer')->render($response, "users/new.phtml", $params);
 });
 
-//
+// валидация, создание пользователя и переадресация на главную или вывод ошибок
 $app->post('/addusers', function ($request, $response) {
     $user = $request->getParsedBodyParam('user');
     $errors = validate($user);
@@ -116,7 +117,7 @@ $app->post('/addusers', function ($request, $response) {
     $strFromFileUser = file_get_contents($pathToFile);
     $user['id'] = setUserId($strFromFileUser);
     $jsonUser = json_encode($user);
-    if (count($errors) === 0) {    
+    if (count($errors) === 0) {
         file_put_contents($pathToFile, $jsonUser . "|", FILE_APPEND);
         return $response->withHeader('Location', '/')
             ->withStatus(302);
@@ -128,4 +129,31 @@ $app->post('/addusers', function ($request, $response) {
     return $this->get('renderer')->render($response, "users/new.phtml", $params);
 });
 
+// запрос на /phpcourses/new и подключение шаблона courses/new из папки template и реализация регистрации нового курса
+$app->get('/phpcourses/new', function ($request, $response) {
+    $params = [
+        'course' => ['title' => '', 'paid' => ''],
+        'errors' => [],
+    ];
+    return $this->get('renderer')->render($response, "courses/new.phtml", $params);
+});
+
+// валидация, создание курса и переадресация на главную или вывод ошибок
+$app->post('/phpcourses', function ($request, $response) {
+    $course = $request->getParsedBodyParam('course');
+    $validator = new Validator();
+    $errors = $validator->validate($course);
+
+    if (count($errors) === 0) {
+        // $repo->save($course);
+        return $response->withHeader('Location', '/')
+            ->withStatus(302);
+    }
+    $params = [
+        'course' => $course,
+        'errors' => $errors,
+        'post' => $_POST,
+    ];
+    return $this->get('renderer')->render($response, "courses/new.phtml", $params)->withStatus(422);
+});
 $app->run();
