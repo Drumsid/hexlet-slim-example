@@ -1,6 +1,8 @@
 <?php
 
-require_once __DIR__ . '/interfaces/ValidatorInterface.php';
+namespace Hexlet\Slim\Example\Classes;
+
+use Hexlet\Slim\Example\Classes\Interfaces\ValidatorInterface;
 
 class Validator implements ValidatorInterface
 {

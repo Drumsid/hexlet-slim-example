@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . '/../lib/function.php';
-require_once __DIR__ . '/../classes/Validator.php';
 
 // Подключение автозагрузки через composer
 require __DIR__ . '/../vendor/autoload.php';
@@ -19,7 +18,8 @@ $container->set('renderer', function () {
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 $app->addErrorMiddleware(true, true, true);
-
+// Получаем роутер – объект отвечающий за хранение и обработку маршрутов
+$router = $app->getRouteCollector()->getRouteParser();
 $phones = [1, 2, 3];
 
 $users = [
@@ -141,7 +141,7 @@ $app->get('/phpcourses/new', function ($request, $response) {
 // валидация, создание курса и переадресация на главную или вывод ошибок
 $app->post('/phpcourses', function ($request, $response) {
     $course = $request->getParsedBodyParam('course');
-    $validator = new Validator();
+    $validator = new Hexlet\Slim\Example\Classes\Validator();
     $errors = $validator->validate($course);
 
     if (count($errors) === 0) {
@@ -156,4 +156,15 @@ $app->post('/phpcourses', function ($request, $response) {
     ];
     return $this->get('renderer')->render($response, "courses/new.phtml", $params)->withStatus(422);
 });
+// $test = $router->urlFor('test');
+// Именованные маршруты
+$app->get('/test', function ($request, $response) use ($router) {
+    // в функцию передаётся имя маршрута, а она возвращает url
+    $router->urlFor('test'); // /users
+    //$router->urlFor('user', ['id' => 4]); // /users/4
+    $params = [
+        'router' => $router,
+    ];
+    return $this->get('renderer')->render($response, "test/index.phtml", $params);
+})->setName('test');
 $app->run();

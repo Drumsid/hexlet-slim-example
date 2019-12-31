@@ -1,11 +1,14 @@
-<h1>Hello, <?= htmlspecialchars($id) ?></h1>
-<h1>Hello, <?= htmlspecialchars($nickname) ?></h1>
+<h3>User page</h3>
 
 <a href="/">Главная</a>
 <a href="/users">Пользователи</a>
 <a href="/search">Поиск</a>
 <a href="/addusers/new">Регистрация</a>
+<a href="/phpcourses/new">Добавить курс</a>
+<a href="/test">test page</a>
 
+<h3>Hello, <?= htmlspecialchars($id) ?></h3>
+<h3>Hello, <?= htmlspecialchars($nickname) ?></h3>
 
 <?php foreach ($users as $user) :
 

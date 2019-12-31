@@ -1,7 +1,5 @@
-<h3>Home page</h3>
+<h3>Test page</h3>
 
-<?php //print_r($_POST); 
-?>
 
 <a href="/">Главная</a>
 <a href="/users">Пользователи</a>
@@ -9,4 +7,8 @@
 <a href="/addusers/new">Регистрация</a>
 <a href="/phpcourses/new">Добавить курс</a>
 <a href="/test">test page</a>
-<p>Welcome to Slim!</p>
+
+<?php
+echo "<pre>";
+print_r($router->urlFor('test'));
+echo "<pre>";
