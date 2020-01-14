@@ -167,4 +167,16 @@ $app->get('/test', function ($request, $response) use ($router) {
     ];
     return $this->get('renderer')->render($response, "test/index.phtml", $params);
 })->setName('test');
+
+// Именованные маршруты
+$app->get('/xdebug', function ($request, $response) use ($router) {
+    // в функцию передаётся имя маршрута, а она возвращает url
+    $router->urlFor('xdebug'); // /users
+    //$router->urlFor('user', ['id' => 4]); // /users/4
+    $params = [
+        'router' => $router,
+    ];
+    return $this->get('renderer')->render($response, "xdebug/index.phtml", $params);
+})->setName('xdebug');
+
 $app->run();
