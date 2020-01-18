@@ -1,4 +1,4 @@
-<h3>Users page</h3>
+<h3><?= $nickname ?> user page</h3>
 <?php
 // echo "<pre>";
 // print_r($users);
@@ -11,6 +11,12 @@
 <a href="/phpcourses/new">Добавить курс</a>
 <a href="/test">test page</a>
 
-<?php foreach ($users as ['id' => $id, 'nickname' => $nickname]) : ?>
-    <p>id: <?= $id ?> nickname: <a href="/users/<?= $id ?>"><?= $nickname ?></a></p>
+<?php foreach ($users as $user) :
+
+    if ($user['nickname'] == $nickname) : ?>
+
+        <p>id: <?= $user['id'] ?>; nickname: <b><?= $user['nickname'] ?></b>; email: <b><?= $user['email'] ?></b>;</p>
+
+    <?php endif; ?>
+
 <?php endforeach; ?>

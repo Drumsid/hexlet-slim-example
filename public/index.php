@@ -22,38 +22,15 @@ $app->addErrorMiddleware(true, true, true);
 $router = $app->getRouteCollector()->getRouteParser();
 $phones = [1, 2, 3];
 
-$users = [
-    ['id' => 32, 'firstName' => 'Julianne', 'lastName' => 'Mueller', 'email' => 'claire77@satterfield.com'],
-    ['id' => 54, 'firstName' => 'Brandy', 'lastName' => 'Reichel', 'email' => 'Reichel@satterfield.com'],
-    ['id' => 23, 'firstName' => 'Lonnie', 'lastName' => 'Ankunding', 'email' => 'Ankunding@satterfield.com'],
-    ['id' => 76, 'firstName' => 'Juwan', 'lastName' => 'Weimann', 'email' => 'Weimann@satterfield.com'],
-    ['id' => 2, 'firstName' => 'Norval', 'lastName' => 'Nitzsche', 'email' => 'Nitzsche@satterfield.com'],
-];
+$users = parseUsers('/../users/users.txt');
 
 $searchUsers = ['mike', 'mishel', 'adel', 'keks', 'kamila', 'satras', 'asdasdtrasd', 'asdtrmifs'];
-
-// тестовый вывод slim при установке
-// $app->get('/', function ($request, $response) {
-//     return $response->write('Welcome to Slim!');
-// });
 
 //запрос на главную и подключение шаблона index в папке template
 $app->get('/', function ($request, $response) {
     return $this->get('renderer')->render($response, 'index.phtml');
 });
 
-// get запрос
-//
-// $app->get('/users', function ($request, $response) {
-//     return $response->write('GET /users');
-// });
-//
-// post запрос
-// $app->post('/users', function ($request, $response) {
-//     return $response->write('POST /users');
-// });
-//
-//
 
 $app->get('/phone', function ($request, $response) use ($phones) {
     return $response->write(json_encode($phones));
@@ -73,24 +50,20 @@ $app->get('/users', function ($request, $response, $args) use ($users) {
 // запрос на /users/{id} и подключение шаблона users/show из папки template
 $app->get('/users/{id}', function ($request, $response, $args) use ($users) {
     $params = ['users' => $users, 'userId' => $args['id'], 'id' => $args['id'], 'nickname' => 'user-' . $args['id']];
-    return $this->get('renderer')->render($response, 'users/show.phtml', $params);
+    if (isUserId($args['id'], $users)) {
+        return $this->get('renderer')->render($response, 'users/show.phtml', $params);
+    }
+    return $this->get('renderer')->render($response, 'error/index.phtml', $params)->withStatus(404);
 });
 
-// 
-//
-// подключаем переадресацию на статус 302
-// $app->post('/users', function ($request, $response) {
-//     return $response->withStatus(302);
-// });
-// подключаем шаблон users/show и выводим переменные id и nickname
-// $app->get('/users/{id}', function ($request, $response, $args) {
-//     $params = ['id' => $args['id'], 'nickname' => 'user-' . $args['id']];
-//     // Указанный путь считается относительно базовой директории для шаблонов, заданной на этапе конфигурации
-//     // $this доступен внутри анонимной функции благодаря http://php.net/manual/ru/closure.bindto.php
-//     return $this->get('renderer')->render($response, 'users/show.phtml', $params);
-// });
-//
-//
+// запрос на /user/{nickname} и подключение шаблона users/nickname из папки template
+$app->get('/user/{nickname}', function ($request, $response, $args) use ($users) {
+    $params = ['users' => $users, 'nickname' => $args['nickname']];
+    if (isUser($args['nickname'], $users)) {
+        return $this->get('renderer')->render($response, 'users/nickname.phtml', $params);
+    }
+    return $this->get('renderer')->render($response, 'error/index.phtml', $params)->withStatus(404);
+});
 
 // запрос на /search и подключение шаблона search/index из папки template и реализация поиска в массиве $searchUsers
 $app->get('/search', function ($request, $response) use ($searchUsers) {
@@ -118,7 +91,7 @@ $app->post('/addusers', function ($request, $response) {
     $user['id'] = setUserId($strFromFileUser);
     $jsonUser = json_encode($user);
     if (count($errors) === 0) {
-        file_put_contents($pathToFile, $jsonUser . "|", FILE_APPEND);
+        file_put_contents($pathToFile, $jsonUser . "|\n", FILE_APPEND);
         return $response->withHeader('Location', '/')
             ->withStatus(302);
     }
@@ -156,6 +129,7 @@ $app->post('/phpcourses', function ($request, $response) {
     ];
     return $this->get('renderer')->render($response, "courses/new.phtml", $params)->withStatus(422);
 });
+
 // $test = $router->urlFor('test');
 // Именованные маршруты
 $app->get('/test', function ($request, $response) use ($router) {
@@ -167,4 +141,16 @@ $app->get('/test', function ($request, $response) use ($router) {
     ];
     return $this->get('renderer')->render($response, "test/index.phtml", $params);
 })->setName('test');
+
+// Xdebug маршру
+$app->get('/xdebug', function ($request, $response) use ($router) {
+    // в функцию передаётся имя маршрута, а она возвращает url
+    $router->urlFor('xdebug'); // /users
+    //$router->urlFor('user', ['id' => 4]); // /users/4
+    $params = [
+        'router' => $router,
+    ];
+    return $this->get('renderer')->render($response, "debug/index.phtml", $params);
+})->setName('xdebug');
+
 $app->run();
