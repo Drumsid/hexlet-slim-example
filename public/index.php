@@ -8,6 +8,8 @@ require __DIR__ . '/../vendor/autoload.php';
 use Slim\Factory\AppFactory;
 use DI\Container;
 
+session_start();
+
 // подключаем контейнер для подключения шаблонов к slim
 $container = new Container();
 $container->set('renderer', function () {
@@ -15,20 +17,30 @@ $container->set('renderer', function () {
     return new \Slim\Views\PhpRenderer(__DIR__ . '/../templates');
 });
 
+$container->set('flash', function () {
+    return new \Slim\Flash\Messages();
+});
+
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 $app->addErrorMiddleware(true, true, true);
 // Получаем роутер – объект отвечающий за хранение и обработку маршрутов
 $router = $app->getRouteCollector()->getRouteParser();
-$phones = [1, 2, 3];
 
+$phones = [1, 2, 3];
+// выводим юзеров из файла
 $users = parseUsers('/../users/users.txt');
 
+// юзеры для теста поиска
 $searchUsers = ['mike', 'mishel', 'adel', 'keks', 'kamila', 'satras', 'asdasdtrasd', 'asdtrmifs'];
 
 //запрос на главную и подключение шаблона index в папке template
 $app->get('/', function ($request, $response) {
-    return $this->get('renderer')->render($response, 'index.phtml');
+    // aad flash message
+    $flashes = $this->get('flash')->getMessages();
+    $params = ['flashes' => $flashes];
+
+    return $this->get('renderer')->render($response, 'index.phtml', $params);
 });
 
 
@@ -92,6 +104,7 @@ $app->post('/addusers', function ($request, $response) {
     $jsonUser = json_encode($user);
     if (count($errors) === 0) {
         file_put_contents($pathToFile, $jsonUser . "|\n", FILE_APPEND);
+        $this->get('flash')->addMessage('success', 'User Added');
         return $response->withHeader('Location', '/')
             ->withStatus(302);
     }
@@ -130,7 +143,6 @@ $app->post('/phpcourses', function ($request, $response) {
     return $this->get('renderer')->render($response, "courses/new.phtml", $params)->withStatus(422);
 });
 
-// $test = $router->urlFor('test');
 // Именованные маршруты
 $app->get('/test', function ($request, $response) use ($router) {
     // в функцию передаётся имя маршрута, а она возвращает url

@@ -1,3 +1,10 @@
+<style>
+    .success-flash {
+        background: #b8edb8;
+        font-weight: 700;
+        padding: 15px 20px;
+    }
+</style>
 <h3>Home page</h3>
 
 <?php //print_r($_POST); 
@@ -10,3 +17,14 @@
 <a href="/phpcourses/new">Добавить курс</a>
 <a href="/test">test page</a>
 <p>Welcome to Slim!</p>
+
+<?php
+// flash message
+if (isset($flashes)) {
+    array_map(function ($flashe) {
+        return array_map(function ($message) { ?>
+            <p class="success-flash"> <?php print_r($message); ?> </p>
+<?php  }, $flashe);
+    }, $flashes);
+}
+?>
