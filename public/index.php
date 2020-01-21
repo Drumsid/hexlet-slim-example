@@ -17,6 +17,7 @@ $container->set('renderer', function () {
     return new \Slim\Views\PhpRenderer(__DIR__ . '/../templates');
 });
 
+// подключаем flash
 $container->set('flash', function () {
     return new \Slim\Flash\Messages();
 });
@@ -38,7 +39,9 @@ $searchUsers = ['mike', 'mishel', 'adel', 'keks', 'kamila', 'satras', 'asdasdtra
 $app->get('/', function ($request, $response) {
     // aad flash message
     $flashes = $this->get('flash')->getMessages();
-    $params = ['flashes' => $flashes];
+    $params = [
+        'flashes' => $flashes
+    ];
 
     return $this->get('renderer')->render($response, 'index.phtml', $params);
 });
@@ -46,7 +49,7 @@ $app->get('/', function ($request, $response) {
 
 $app->get('/phone', function ($request, $response) use ($phones) {
     return $response->write(json_encode($phones));
-});
+})->setName('phone');
 
 $app->get('/courses/{id}', function ($request, $response, array $args) {
     $id = $args['id'];
@@ -55,9 +58,15 @@ $app->get('/courses/{id}', function ($request, $response, array $args) {
 
 // запрос на /users и подключение шаблона users/index из папки template
 $app->get('/users', function ($request, $response, $args) use ($users) {
-    $params = ['users' => $users];
+    $page  = $request->getQueryParam('page', 1);
+    $per =  5;
+    $users = array_slice($users, $page === 1 ? 0 : ($page - 1) * $per, $per);
+    $params = [
+        'users' => $users,
+        'page' => $page
+    ];
     return $this->get('renderer')->render($response, 'users/index.phtml', $params);
-});
+})->setName('users');
 
 // запрос на /users/{id} и подключение шаблона users/show из папки template
 $app->get('/users/{id}', function ($request, $response, $args) use ($users) {
@@ -66,7 +75,7 @@ $app->get('/users/{id}', function ($request, $response, $args) use ($users) {
         return $this->get('renderer')->render($response, 'users/show.phtml', $params);
     }
     return $this->get('renderer')->render($response, 'error/index.phtml', $params)->withStatus(404);
-});
+})->setName('userId');
 
 // запрос на /user/{nickname} и подключение шаблона users/nickname из папки template
 $app->get('/user/{nickname}', function ($request, $response, $args) use ($users) {
@@ -75,16 +84,17 @@ $app->get('/user/{nickname}', function ($request, $response, $args) use ($users)
         return $this->get('renderer')->render($response, 'users/nickname.phtml', $params);
     }
     return $this->get('renderer')->render($response, 'error/index.phtml', $params)->withStatus(404);
-});
+})->setName('usersName');
 
 // запрос на /search и подключение шаблона search/index из папки template и реализация поиска в массиве $searchUsers
 $app->get('/search', function ($request, $response) use ($searchUsers) {
     $term = $request->getQueryParam('term');
     $params = ['searchUsers' => $searchUsers, 'term' => $term];
     return $this->get('renderer')->render($response, 'search/index.phtml', $params);
-});
+})->setName('search');
 
-// запрос на /addusers/new и подключение шаблона users/new из папки template и реализация регистрации нового пользователя
+// запрос на /addusers/new и подключение шаблона users/new из папки template и
+// реализация регистрации нового пользователя
 $app->get('/addusers/new', function ($request, $response) {
     $params = [
         'user' => ['nickname' => '', 'email' => ''],
@@ -92,7 +102,7 @@ $app->get('/addusers/new', function ($request, $response) {
         'dir' => __DIR__,
     ];
     return $this->get('renderer')->render($response, "users/new.phtml", $params);
-});
+})->setName('addNewUser');
 
 // валидация, создание пользователя и переадресация на главную или вывод ошибок
 $app->post('/addusers', function ($request, $response) {
@@ -113,7 +123,7 @@ $app->post('/addusers', function ($request, $response) {
         'errors' => $errors
     ];
     return $this->get('renderer')->render($response, "users/new.phtml", $params);
-});
+})->setName('addusers');
 
 // запрос на /phpcourses/new и подключение шаблона courses/new из папки template и реализация регистрации нового курса
 $app->get('/phpcourses/new', function ($request, $response) {
@@ -122,7 +132,7 @@ $app->get('/phpcourses/new', function ($request, $response) {
         'errors' => [],
     ];
     return $this->get('renderer')->render($response, "courses/new.phtml", $params);
-});
+})->setName('addPhpCourse');
 
 // валидация, создание курса и переадресация на главную или вывод ошибок
 $app->post('/phpcourses', function ($request, $response) {
@@ -141,7 +151,7 @@ $app->post('/phpcourses', function ($request, $response) {
         'post' => $_POST,
     ];
     return $this->get('renderer')->render($response, "courses/new.phtml", $params)->withStatus(422);
-});
+})->setName('phpcourses');
 
 // Именованные маршруты
 $app->get('/test', function ($request, $response) use ($router) {

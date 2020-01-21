@@ -15,7 +15,8 @@
 
     if ($user['nickname'] == $nickname) : ?>
 
-        <p>id: <?= $user['id'] ?>; nickname: <b><?= $user['nickname'] ?></b>; email: <b><?= $user['email'] ?></b>;</p>
+        <p>id: <?= htmlspecialchars($user['id']) ?>; nickname: <b><?= htmlspecialchars($user['nickname']) ?></b>; 
+        email: <b><?= htmlspecialchars($user['email']) ?></b>;</p>
 
     <?php endif; ?>
 
