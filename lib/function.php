@@ -38,15 +38,20 @@ function setUserId($str)
     return checkId($decodeUsers);
 }
 
-//=========================parse from file ===================
+//========================= parse from file ===================
 function parseUsers($file)
 {
     $textUsers = file_get_contents(__DIR__ . $file);
     $strJson = explode("|", $textUsers);
+
     $users = array_map(function ($user) {
         return json_decode($user, true);
     }, $strJson);
-    return array_diff($users, ['']);
+
+    $not_empty = array_filter($users, function ($user) {
+        return !empty($user);
+    });
+    return $not_empty;
 }
 
 // ==============================================================
@@ -70,4 +75,16 @@ function isUserId($findUserId, $users)
         }
     });
     return $res ? true : false;
+}
+
+// =================================================================
+
+function isUserById($findUserId, $users)
+{
+    $result = array_filter($users, function ($user) use ($findUserId) {
+        if ($user['id'] == $findUserId) {
+            return $user;
+        }
+    });
+    return $result ? $result : false;
 }
