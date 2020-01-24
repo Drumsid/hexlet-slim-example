@@ -86,5 +86,22 @@ function isUserById($findUserId, $users)
             return $user;
         }
     });
-    return $result ? $result : false;
+    [$elem] = array_values($result);
+    return $elem ? $elem : false;
+}
+
+
+//===================================================================
+
+function editUser($userId, $editData, $users)
+{
+    $res = array_map(function ($user) use ($userId, $editData) {
+
+        if ($user['id'] == $userId) {
+            $user['nickname'] = $editData;
+        }
+        return $user;
+    }, $users);
+    return $res;
+    // запись массива в файл нужно
 }

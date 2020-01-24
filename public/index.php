@@ -7,6 +7,7 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Slim\Factory\AppFactory;
 use DI\Container;
+use Slim\Middleware\MethodOverrideMiddleware;
 
 session_start();
 
@@ -24,6 +25,7 @@ $container->set('flash', function () {
 
 AppFactory::setContainer($container);
 $app = AppFactory::create();
+$app->add(MethodOverrideMiddleware::class);
 $app->addErrorMiddleware(true, true, true);
 // Получаем роутер – объект отвечающий за хранение и обработку маршрутов
 $router = $app->getRouteCollector()->getRouteParser();
@@ -136,6 +138,34 @@ $app->get('/user/{id}/edit', function ($request, $response, array $args) use ($u
     ];
     return $this->get('renderer')->render($response, 'users/edit.phtml', $params);
 })->setName('editSchool');
+
+$app->patch('/user/{id}', function ($request, $response, array $args) use ($users) {
+    $id = $args['id'];
+    // $school = $repo->find($id);
+    // $data = $request->getParsedBodyParam('school');
+
+    // $validator = new Validator();
+    // $errors = $validator->validate($data);
+
+    if (count($errors) === 0) {
+        // Ручное копирование данных из формы в нашу сущность
+        $school['name'] = $data['name'];
+
+        $this->get('flash')->addMessage('success', 'School has been updated');
+        $repo->save($school);
+        $url = $router->urlFor('editSchool', ['id' => $school['id']]);
+        return $response->withRedirect($url);
+    }
+
+    $params = [
+        'schoolData' => $data,
+        'school' => $school,
+        'errors' => $errors
+    ];
+
+    $response = $response->withStatus(422);
+    return $this->get('renderer')->render($response, 'schools/edit.phtml', $params);
+});
 
 // ============== CRUD BLOCK ===================================
 
