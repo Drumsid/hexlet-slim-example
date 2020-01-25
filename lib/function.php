@@ -105,3 +105,13 @@ function editUser($userId, $editData, $users)
     return $res;
     // запись массива в файл нужно
 }
+
+//======================================================================
+function arrToJson($arr)
+{
+    $str = "";
+    foreach ($arr as $vol) {
+        $str .= json_encode($vol) . "|\n";
+    }
+    return $str;
+}

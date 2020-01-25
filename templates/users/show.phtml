@@ -1,3 +1,10 @@
+<style>
+    .success-flash {
+        background: #b8edb8;
+        font-weight: 700;
+        padding: 15px 20px;
+    }
+</style>
 <h3>User page</h3>
 
 <a href="/">Главная</a>
@@ -14,9 +21,19 @@
 
     if ($user['id'] == $userId) : ?>
 
-        <p>id: <?= htmlspecialchars($user['id']) ?>; nickname: <b><?= htmlspecialchars($user['nickname']) ?></b>; 
-        email: <b><?= htmlspecialchars($user['email']) ?></b>;</p>
+        <p>id: <?= htmlspecialchars($user['id']) ?>; nickname: <b><?= htmlspecialchars($user['nickname']) ?></b>;
+            email: <b><?= htmlspecialchars($user['email']) ?></b>; <a href="/user/<?= $user['id'] ?>/edit">edit this user</a></p>
 
     <?php endif; ?>
 
 <?php endforeach; ?>
+<?php
+// flash message
+if (isset($flashes)) {
+    array_map(function ($flashe) {
+        return array_map(function ($message) { ?>
+            <p class="success-flash"> <?php print_r($message); ?> </p>
+<?php  }, $flashe);
+    }, $flashes);
+}
+?>

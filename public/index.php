@@ -31,6 +31,7 @@ $app->addErrorMiddleware(true, true, true);
 $router = $app->getRouteCollector()->getRouteParser();
 
 $phones = [1, 2, 3];
+
 // выводим юзеров из файла
 $users = parseUsers('/../users/users.txt');
 
@@ -44,7 +45,6 @@ $app->get('/', function ($request, $response) {
     $params = [
         'flashes' => $flashes
     ];
-
     return $this->get('renderer')->render($response, 'index.phtml', $params);
 })->setName('/');
 
@@ -62,7 +62,7 @@ $app->get('/courses/{id}', function ($request, $response, array $args) {
 
 // запрос на /users и подключение шаблона users/index из папки template
 $app->get('/users', function ($request, $response, $args) use ($users) {
-
+    // paging
     $page  = $request->getQueryParam('page', 1);
     $per =  5;
     $users = array_slice($users, $page === 1 ? 0 : ($page - 1) * $per, $per);
@@ -77,11 +77,13 @@ $app->get('/users', function ($request, $response, $args) use ($users) {
 
 // запрос на /users/{id} и подключение шаблона users/show из папки template
 $app->get('/user/{id}', function ($request, $response, $args) use ($users) {
+    $flashes = $this->get('flash')->getMessages();
     $params = [
         'users' => $users,
         'userId' => $args['id'],
         'id' => $args['id'],
-        'nickname' => 'user-' . $args['id']
+        'nickname' => 'user-' . $args['id'],
+        'flashes' => $flashes
     ];
     if (isUserId($args['id'], $users)) {
         return $this->get('renderer')->render($response, 'users/show.phtml', $params);
@@ -137,37 +139,38 @@ $app->get('/user/{id}/edit', function ($request, $response, array $args) use ($u
         'errors' => []
     ];
     return $this->get('renderer')->render($response, 'users/edit.phtml', $params);
-})->setName('editSchool');
+})->setName('editUser');
 
-$app->patch('/user/{id}', function ($request, $response, array $args) use ($users) {
+// patch !!!! запрос
+$app->patch('/user/{id}', function ($request, $response, array $args) use ($users, $router) {
     $id = $args['id'];
-    // $school = $repo->find($id);
-    // $data = $request->getParsedBodyParam('school');
-
-    // $validator = new Validator();
-    // $errors = $validator->validate($data);
+    $editUser = isUserById($id, $users);
+    $editData = $request->getParsedBodyParam('editUser');
+    // $newUsers = editUser($editUser['id'], $editData, $users);
+    $errors = validate($editData);
 
     if (count($errors) === 0) {
-        // Ручное копирование данных из формы в нашу сущность
-        $school['name'] = $data['name'];
+        // Ручное копирование данных из формы в нашу сущност
+        $newUsers = editUser($editUser['id'], $editData['nickname'], $users);
+        $pathToFile = __DIR__ . "/../users/users.txt";
+        file_put_contents($pathToFile, arrToJson($newUsers));
 
-        $this->get('flash')->addMessage('success', 'School has been updated');
-        $repo->save($school);
-        $url = $router->urlFor('editSchool', ['id' => $school['id']]);
+        $this->get('flash')->addMessage('success', 'User has been updated');
+
+        $url = $router->urlFor('userId', ['id' => $editUser['id']]);
         return $response->withRedirect($url);
     }
 
     $params = [
-        'schoolData' => $data,
-        'school' => $school,
+        'editUser' => $editUser,
         'errors' => $errors
     ];
 
     $response = $response->withStatus(422);
-    return $this->get('renderer')->render($response, 'schools/edit.phtml', $params);
+    return $this->get('renderer')->render($response, 'users/edit.phtml', $params);
 });
 
-// ============== CRUD BLOCK ===================================
+// ============== CRUD BLOCK END ===================================
 
 
 // запрос на /user/{nickname} и подключение шаблона users/nickname из папки template
