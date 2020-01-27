@@ -1,7 +1,3 @@
 {"nickname":"test begin","email":"den-sidnay@yandex.ru","id":1895122116}|
-{"nickname":"test 2","email":"Julia@jill.com","id":80148357}|
-{"nickname":"test 333","email":"den-sidnay@yandex.ru","id":667692254}|
-{"nickname":"test 4444454533243","email":"den-sidnay@yandex.ru","id":1792025540}|
-{"nickname":"test 55555","email":"den-sidnay@yandex.ru","id":796174652}|
-{"nickname":"test 66666666666","email":"den-sidnay@yandex.ru","id":85338800}|
 {"nickname":"Denis main","email":"den-sidnay@yandex.ru","id":1173851987}|
+{"nickname":"Jill edited","email":"den-sidnay@yandex.ru","id":1179325037}|

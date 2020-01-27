@@ -67,9 +67,12 @@ $app->get('/users', function ($request, $response, $args) use ($users) {
     $per =  5;
     $users = array_slice($users, $page === 1 ? 0 : ($page - 1) * $per, $per);
 
+    $flashes = $this->get('flash')->getMessages();
+
     $params = [
         'users' => $users,
-        'page' => $page
+        'page' => $page,
+        'flashes' => $flashes
     ];
 
     return $this->get('renderer')->render($response, 'users/index.phtml', $params);
@@ -168,6 +171,18 @@ $app->patch('/user/{id}', function ($request, $response, array $args) use ($user
 
     $response = $response->withStatus(422);
     return $this->get('renderer')->render($response, 'users/edit.phtml', $params);
+});
+
+// delete user
+$app->delete('/user/{id}', function ($request, $response, array $args) use ($users, $router) {
+    $id = $args['id'];
+
+    $newUsers = deleteUser($id, $users);
+    $pathToFile = __DIR__ . "/../users/users.txt";
+    file_put_contents($pathToFile, arrToJson($newUsers));
+
+    $this->get('flash')->addMessage('success', 'User has been removed');
+    return $response->withRedirect($router->urlFor('users'));
 });
 
 // ============== CRUD BLOCK END ===================================

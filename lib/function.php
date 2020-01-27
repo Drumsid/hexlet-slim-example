@@ -115,3 +115,15 @@ function arrToJson($arr)
     }
     return $str;
 }
+
+// ====================================================================
+
+function deleteUser($delUser, $users)
+{
+    $result = array_filter($users, function ($user) use ($delUser) {
+        if ($user['id'] != $delUser) {
+            return $user;
+        }
+    });
+    return $result;
+}

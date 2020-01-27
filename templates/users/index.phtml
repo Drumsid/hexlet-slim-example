@@ -1,3 +1,10 @@
+<style>
+    .success-flash {
+        background: #b8edb8;
+        font-weight: 700;
+        padding: 15px 20px;
+    }
+</style>
 <h3>Users page</h3>
 <?php
 // echo "<pre>";
@@ -23,3 +30,13 @@
 
 <?php endif; ?>
 <a href="?page=<?= $page < 2 ? 1 : $page - 1 ?>">previous</a> <a href="?page=<?= $page + 1 ?>">next</a>
+<?php
+// flash message
+if (isset($flashes)) {
+    array_map(function ($flashe) {
+        return array_map(function ($message) { ?>
+            <p class="success-flash"> <?php print_r($message); ?> </p>
+<?php  }, $flashe);
+    }, $flashes);
+}
+?>

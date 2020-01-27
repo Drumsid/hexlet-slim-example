@@ -4,6 +4,14 @@
         font-weight: 700;
         padding: 15px 20px;
     }
+    #hiddForm {
+        width: 200px;
+        margin: 0 auto;
+        display: none;
+        border: 1px solid red;
+        border-radius: 25px;
+        padding: 30px;
+    }
 </style>
 <h3>User page</h3>
 
@@ -23,6 +31,7 @@
 
         <p>id: <?= htmlspecialchars($user['id']) ?>; nickname: <b><?= htmlspecialchars($user['nickname']) ?></b>;
             email: <b><?= htmlspecialchars($user['email']) ?></b>; <a href="/user/<?= $user['id'] ?>/edit">edit this user</a></p>
+            <p><a id ="delete_user_confirm" href="">delete this user</a></p>
 
     <?php endif; ?>
 
@@ -37,3 +46,26 @@ if (isset($flashes)) {
     }, $flashes);
 }
 ?>
+<div id = "hiddForm" >
+    <form  action="/user/<?= htmlspecialchars($id) ?>" method="post">
+    <h1>Delete this user?</h1>
+        <input type="hidden" name="_METHOD" value="DELETE">
+        <input type="submit" value="Delete">
+        <input id = "user-reset" type="reset" value="Reset">
+    </form>
+</div>
+
+
+<script>
+    let confUser = document.querySelector("#delete_user_confirm");
+    let hiddForm = document.querySelector("#hiddForm");
+    let reset = document.querySelector("#user-reset");
+
+    confUser.addEventListener("click", function(e){
+        e.preventDefault();
+        hiddForm.style.display = "block";
+    });
+    reset.addEventListener("click", function(e){
+        hiddForm.style.display = "none";
+    });
+</script>
