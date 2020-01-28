@@ -1,0 +1,48 @@
+<style>
+    .success-flash {
+        background: #b8edb8;
+        font-weight: 700;
+        padding: 15px 20px;
+    }
+</style>
+<h3>Cart page</h3>
+
+<?php //print_r($_POST); 
+?>
+
+<a href="/">Главная</a>
+<a href="/users">Пользователи</a>
+<a href="/search">Поиск</a>
+<a href="/addusers/new">Регистрация</a>
+<a href="/phpcourses/new">Добавить курс</a>
+<a href="/test">Test page</a>
+<a href="/cart">Cart page</a>
+
+<form action="/cart-items" method="post">
+    <input type="hidden" name="item[id]" value="1">
+    <input type="hidden" name="item[name]" value="One">
+    One item
+    <input type="submit" value="Add">
+</form>
+
+<form action="/cart-items" method="post">
+    <input type="hidden" name="item[id]" value="2">
+    <input type="hidden" name="item[name]" value="Two">
+    Two item
+    <input type="submit" value="Add">
+</form>
+
+<form action="/cart-items" method="post">
+    <input type="hidden" name="_METHOD" value="DELETE">
+    <input type="submit" value="Clean">
+</form>
+
+<?php if (count($cart) == 0) : ?>
+    <div>Cart is empty</div>
+<?php else : ?>
+    <?php foreach ($cart as $item) : ?>
+        <div>
+            <?= htmlspecialchars($item['name']) ?>: <?= htmlspecialchars($item['count']) ?>
+        </div>
+    <?php endforeach ?>
+<?php endif ?>

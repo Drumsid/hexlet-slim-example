@@ -4,6 +4,7 @@
         font-weight: 700;
         padding: 15px 20px;
     }
+
     #hiddForm {
         width: 200px;
         margin: 0 auto;
@@ -20,7 +21,8 @@
 <a href="/search">Поиск</a>
 <a href="/addusers/new">Регистрация</a>
 <a href="/phpcourses/new">Добавить курс</a>
-<a href="/test">test page</a>
+<a href="/test">Test page</a>
+<a href="/cart">Cart page</a>
 
 <h3>Hello, <?= htmlspecialchars($id) ?></h3>
 <h3>Hello, <?= htmlspecialchars($nickname) ?></h3>
@@ -31,7 +33,7 @@
 
         <p>id: <?= htmlspecialchars($user['id']) ?>; nickname: <b><?= htmlspecialchars($user['nickname']) ?></b>;
             email: <b><?= htmlspecialchars($user['email']) ?></b>; <a href="/user/<?= $user['id'] ?>/edit">edit this user</a></p>
-            <p><a id ="delete_user_confirm" href="">delete this user</a></p>
+        <p><a id="delete_user_confirm" href="">delete this user</a></p>
 
     <?php endif; ?>
 
@@ -46,12 +48,12 @@ if (isset($flashes)) {
     }, $flashes);
 }
 ?>
-<div id = "hiddForm" >
-    <form  action="/user/<?= htmlspecialchars($id) ?>" method="post">
-    <h1>Delete this user?</h1>
+<div id="hiddForm">
+    <form action="/user/<?= htmlspecialchars($id) ?>" method="post">
+        <h1>Delete this user?</h1>
         <input type="hidden" name="_METHOD" value="DELETE">
         <input type="submit" value="Delete">
-        <input id = "user-reset" type="reset" value="Reset">
+        <input id="user-reset" type="reset" value="Reset">
     </form>
 </div>
 
@@ -61,11 +63,11 @@ if (isset($flashes)) {
     let hiddForm = document.querySelector("#hiddForm");
     let reset = document.querySelector("#user-reset");
 
-    confUser.addEventListener("click", function(e){
+    confUser.addEventListener("click", function(e) {
         e.preventDefault();
         hiddForm.style.display = "block";
     });
-    reset.addEventListener("click", function(e){
+    reset.addEventListener("click", function(e) {
         hiddForm.style.display = "none";
     });
 </script>

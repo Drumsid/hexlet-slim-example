@@ -261,5 +261,51 @@ $app->get('/xdebug', function ($request, $response) use ($router) {
     return $this->get('renderer')->render($response, "debug/index.phtml", $params);
 })->setName('xdebug');
 
+//==================== Cookies ==============================
+
+// === test cart ============================
+$app->get('/cart', function ($request, $response) {
+    $cart = json_decode($request->getCookieParam('cart', json_encode([])), true);
+    $params = [
+        'cart' => $cart
+    ];
+    return $this->get('renderer')->render($response, 'cart/index.phtml', $params);
+});
+
+// 
+$app->post('/cart-items', function ($request, $response) {
+    // Информация о добавляемом товаре
+    $item = $request->getParsedBodyParam('item');
+    $item['count'] = 1;
+
+    // Данные корзины
+    $cart = json_decode($request->getCookieParam('cart'), true);
+
+    if (!is_array($cart)) {
+        $cart = [];
+    }
+    $key = $item['name'];
+    if (!array_key_exists($key, $cart)) {
+        $cart[$key] = $item;
+    } else {
+        $cart[$key]['count'] += 1;
+    }
+
+    // Кодирование корзины
+    $encodedCart = json_encode($cart);
+
+    // Установка новой корзины в куку
+    return $response->withHeader('Set-Cookie', "cart={$encodedCart}")
+        ->withRedirect('/cart');
+});
+
+$app->delete('/cart-items', function ($request, $response) {
+    // Установка новой корзины в куку
+    return $response->withHeader('Set-Cookie', "cart=[]")
+        ->withRedirect('/cart');
+});
+
+//==================== Cookies ==============================
+
 
 $app->run();

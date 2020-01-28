@@ -9,14 +9,15 @@
 <a href="/search">Поиск</a>
 <a href="/addusers/new">Регистрация</a>
 <a href="/phpcourses/new">Добавить курс</a>
-<a href="/test">test page</a>
+<a href="/test">Test page</a>
+<a href="/cart">Cart page</a>
 
 <?php foreach ($users as $user) :
 
     if ($user['nickname'] == $nickname) : ?>
 
-        <p>id: <?= htmlspecialchars($user['id']) ?>; nickname: <b><?= htmlspecialchars($user['nickname']) ?></b>; 
-        email: <b><?= htmlspecialchars($user['email']) ?></b>;</p>
+        <p>id: <?= htmlspecialchars($user['id']) ?>; nickname: <b><?= htmlspecialchars($user['nickname']) ?></b>;
+            email: <b><?= htmlspecialchars($user['email']) ?></b>;</p>
 
     <?php endif; ?>
 
