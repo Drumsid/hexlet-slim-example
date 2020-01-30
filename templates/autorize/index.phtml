@@ -1,0 +1,56 @@
+<?php if (count($flash) > 0): ?>
+  <ul>
+  <?php foreach ($flash as $messages): ?>
+      <?php foreach ($messages as $message): ?>
+          <li><?= $message ?></li>
+      <?php endforeach ?>
+  <?php endforeach ?>
+  </ul>
+<?php endif ?>
+
+<!-- BEGIN (write your solution here) -->
+
+<?php if (isset($_SESSION['login'])){ ?>
+
+<p>Привет, <?php print_r($_SESSION['login']); ?> !</p>
+<p>Sign Out</p>
+    <form action="/autorize" method="post">
+        <input type="hidden" name="_METHOD" value="DELETE">
+        <input type="submit" value="sign out">
+    </form>
+
+<?php } else {?>
+<p>Sign In</p>
+    <div class="wrap-form">
+    <div class="user-form">
+        <h3>Авторизация</h3>
+        <form action="/autorize" method="post">
+            <div>
+                <?php if (isset($errors['name'])) : ?>
+                    <div class="errors">Имя: <?= $errors['name'] ?></div>
+                <?php endif ?>
+                <label>
+                    <span>Name</span>
+
+                    <input type="text" name="user[name]" value="<?= htmlspecialchars($user['name']) ?>">
+                </label>
+
+            </div>
+            <div>
+                <?php if (isset($errors['pass'])) : ?>
+                    <div class="errors"><?= $errors['pass'] ?></div>
+                <?php endif ?>
+                <label>
+                    Password
+                    <input type="Password" required name="user[pass]" value="<?= htmlspecialchars($user['pass']) ?>">
+                </label>
+
+            </div>
+            <input type="submit" value="sign in">
+        </form>
+    </div>
+</div>
+
+<?php } ?>
+
+<a href="/">Главная</a>

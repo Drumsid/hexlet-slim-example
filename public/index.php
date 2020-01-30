@@ -38,6 +38,13 @@ $users = parseUsers('/../users/users.txt');
 // юзеры для теста поиска
 $searchUsers = ['mike', 'mishel', 'adel', 'keks', 'kamila', 'satras', 'asdasdtrasd', 'asdtrmifs'];
 
+// users для теста авторизации + сесии
+$regUsers = [
+    ['name' => 'admin', 'passwordDigest' => hash('sha256', 'secret')],
+    ['name' => 'mike', 'passwordDigest' => hash('sha256', 'superpass')],
+    ['name' => 'kate', 'passwordDigest' => hash('sha256', 'strongpass')]
+];
+
 //запрос на главную и подключение шаблона index в папке template
 $app->get('/', function ($request, $response) {
     // aad flash message
@@ -272,7 +279,7 @@ $app->get('/cart', function ($request, $response) {
     return $this->get('renderer')->render($response, 'cart/index.phtml', $params);
 });
 
-// 
+//
 $app->post('/cart-items', function ($request, $response) {
     // Информация о добавляемом товаре
     $item = $request->getParsedBodyParam('item');
@@ -306,6 +313,51 @@ $app->delete('/cart-items', function ($request, $response) {
 });
 
 //==================== Cookies ==============================
+
+//===================== Session Autorization ================
+
+$app->get('/autorize', function ($request, $response) use ($regUsers) {
+
+    $flash = $this->get('flash')->getMessages();
+    $params = [
+        'user' => ['name' => '', 'pass' => ''],
+        'flash' => $flash
+    ];
+    return $this->get('renderer')->render($response, 'autorize/index.phtml', $params);
+})->setName('/autorize');
+
+$app->post('/autorize', function ($request, $response) use ($regUsers) {
+
+    $registr = $request->getParsedBodyParam('user');
+
+    $test = array_filter($regUsers, function ($user) use ($registr) {
+        if ($user['name'] == $registr['name'] && $user['passwordDigest'] == hash('sha256', $registr['pass'])) {
+            return $user;
+        }
+    });
+
+
+    if (count($test) > 0) {
+        $_SESSION['login'] = $registr['name'];
+        $this->get('flash')->addMessage('success', 'User Autorize');
+
+        $response = $response->withStatus(302);
+        return $response->withRedirect("/autorize");
+    }
+
+    $this->get('flash')->addMessage('success', 'Wrong password or name');
+    return $response->withRedirect("/autorize");
+})->setName('autorizeSet');
+
+$app->delete('/autorize', function ($request, $response) use ($users) {
+    $_SESSION = [];
+    session_destroy();
+
+    // $this->get('flash')->addMessage('delete', 'Session delete');
+    return $response->withRedirect("/autorize");
+})->setName('autorizeDel');
+
+//===================== Session Autorization ================
 
 
 $app->run();
